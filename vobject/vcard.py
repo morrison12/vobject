@@ -12,6 +12,7 @@ try:
 except NameError:
     basestring = (str,bytes)
 
+import base64
 # ------------------------ vCard structs ---------------------------------------
 
 class Name(object):
