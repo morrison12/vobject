@@ -134,7 +134,7 @@ class VCardTextBehavior(behavior.Behavior):
                 line.encoding_param = cls.base64string
             encoding = getattr(line, 'encoding_param', None)
             if encoding:
-                line.value = line.value.decode('base64')
+                line.value = base64.b64decode(line.value)
             else:
                 line.value = stringToTextValues(line.value)[0]
             line.encoded=False
@@ -147,7 +147,10 @@ class VCardTextBehavior(behavior.Behavior):
         if not line.encoded:
             encoding = getattr(line, 'encoding_param', None)
             if encoding and encoding.upper() == cls.base64string:
-                line.value = line.value.encode('base64').replace('\n', '')
+                if isinstance(line.value, bytes):
+                    line.value = base64.b64encode(line.value).decode('ascii')
+                else:
+                    raise NotImplemented
             else:
                 line.value = backslashEscape(line.value)
             line.encoded=True
@@ -202,7 +205,7 @@ class Label(VCardTextBehavior):
     description = 'Formatted address'
 registerBehavior(Label)
 
-wacky_apple_photo_serialize = True
+wacky_apple_photo_serialize = False
 REALLY_LARGE = 1E50
 
 
